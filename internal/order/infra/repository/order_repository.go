@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/google/uuid"
 	"github.com/icrxz/gointensivo/internal/order/domain"
 )
 
@@ -12,17 +11,13 @@ type OrderRepository struct {
 	Db *sql.DB
 }
 
-func NewOrderRepository(db *sql.DB) *OrderRepository {
-	return &OrderRepository{Db: db}
+func NewOrderRepository(db *sql.DB) domain.OrderRepository {
+	return &OrderRepository{
+		Db: db,
+	}
 }
 
 func (r *OrderRepository) Save(ctx context.Context, order *domain.Order) error {
-	ID, err := uuid.NewUUID()
-	if err != nil {
-		return err
-	}
-	order.ID = ID.String()
-
 	query, err := r.Db.PrepareContext(ctx, "INSERT INTO orders (id, price, tax, final_price) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
@@ -34,4 +29,15 @@ func (r *OrderRepository) Save(ctx context.Context, order *domain.Order) error {
 	}
 
 	return nil
+}
+
+func (r *OrderRepository) GetTotal(ctx context.Context) (int, error) {
+	var total int
+
+	err := r.Db.QueryRowContext(ctx, "SELECT COUNT(*) FROM orders").Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }

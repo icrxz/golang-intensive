@@ -56,30 +56,3 @@ func TestOrder_IsValid(t *testing.T) {
 		assert.NoError(t, order.IsValid())
 	})
 }
-
-func TestOrder_CalculateFinalPrice(t *testing.T) {
-	t.Run("Should calculate final price successfully", func(t *testing.T) {
-		order := Order{ID: "123", Price: 1.1, Tax: 10}
-
-		err := order.CalculateFinalPrice()
-
-		assert.NoError(t, err)
-		assert.Equal(t, float64(11), order.FinalPrice)
-	})
-
-	t.Run("Should fails on calculate final price with invalid price", func(t *testing.T) {
-		order := Order{ID: "123", Price: 0, Tax: 10}
-
-		err := order.CalculateFinalPrice()
-
-		assert.Error(t, err, "invalid price")
-	})
-
-	t.Run("Should fails on calculate final price with invalid tax", func(t *testing.T) {
-		order := Order{ID: "123", Price: 1.1, Tax: 0}
-
-		err := order.CalculateFinalPrice()
-
-		assert.Error(t, err, "invalid tax")
-	})
-}

@@ -27,7 +27,7 @@ func (c *OrderController) Create(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	order := orderInput.toDomain()
-	_, err = c.calculatePriceUseCase.Execute(*order)
+	_, err = c.calculatePriceUseCase.Execute(order)
 	if err != nil {
 		return err
 	}
